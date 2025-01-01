@@ -62,11 +62,11 @@ export function Home() {
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [undo, redo]);
+  }, [undo, redo, addLine, addHeading]);
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="p-4 border-b">
+      <div className="p-2 sm:p-4 border-b">
         <TitleEditor title={script.title} onUpdate={updateTitle} />
       </div>
       <ActionBar
@@ -87,7 +87,7 @@ export function Home() {
           });
         }}
       />
-      <div className="flex-1 flex min-h-0">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         <div className="flex-1 min-w-0 relative">
           <Editor
             script={script}
@@ -97,7 +97,7 @@ export function Home() {
             onReorderBlocks={reorderBlocks}
           />
         </div>
-        <div className="w-[400px] border-l overflow-hidden">
+        <div className="w-full lg:w-[400px] border-t lg:border-t-0 lg:border-l overflow-hidden">
           <Analytics script={script} />
         </div>
       </div>
