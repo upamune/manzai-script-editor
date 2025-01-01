@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TitleEditor } from '@/components/TitleEditor';
 import { Editor } from '@/components/Editor';
 import { ActionBar } from '@/components/ActionBar';
@@ -7,7 +7,7 @@ import { useScript } from '@/hooks/useScript';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { createNewScript, STORAGE_KEY } from '@/types/script';
 import { useToast } from '@/hooks/use-toast';
-import type { Script } from '@/types/script';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export function Home() {
   const { toast } = useToast();
@@ -64,6 +64,8 @@ export function Home() {
     return () => window.removeEventListener('keydown', handler);
   }, [undo, redo, addLine, addHeading]);
 
+  const [activeTab, setActiveTab] = useState<'editor' | 'analytics'>('editor');
+
   return (
     <div className="flex flex-col h-screen">
       <div className="p-2 sm:p-4 border-b">
@@ -87,8 +89,18 @@ export function Home() {
           });
         }}
       />
-      <div className="flex flex-col lg:flex-row flex-1 min-h-0">
-        <div className="flex-1 min-w-0 relative">
+      
+      <div className="lg:hidden border-b">
+        <Tabs defaultValue="editor" onValueChange={(value) => setActiveTab(value as 'editor' | 'analytics')}>
+          <TabsList className="w-full">
+            <TabsTrigger value="editor" className="flex-1">エディター</TabsTrigger>
+            <TabsTrigger value="analytics" className="flex-1">分析</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <div className="flex-1 flex min-h-0">
+        <div className={`flex-1 min-w-0 relative ${activeTab === 'editor' ? 'block' : 'hidden lg:block'}`}>
           <Editor
             script={script}
             onUpdateBlock={updateBlock}
@@ -97,7 +109,7 @@ export function Home() {
             onReorderBlocks={reorderBlocks}
           />
         </div>
-        <div className="w-full lg:w-[400px] border-t lg:border-t-0 lg:border-l overflow-hidden">
+        <div className={`w-full lg:w-[400px] lg:border-l overflow-hidden ${activeTab === 'analytics' ? 'block' : 'hidden lg:block'}`}>
           <Analytics script={script} />
         </div>
       </div>
